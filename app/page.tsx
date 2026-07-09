@@ -1191,7 +1191,7 @@ export default function Home() {
 
   return (
     <Toast.Provider swipeDirection="right">
-      <main className="min-h-screen bg-[var(--background)] pb-24 text-[var(--foreground)]">
+      <main className="min-h-screen bg-[var(--background)] pb-[calc(7rem+env(safe-area-inset-bottom))] text-[var(--foreground)]">
         <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--background)]/92 backdrop-blur">
           <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
             <div>
@@ -1327,19 +1327,23 @@ export default function Home() {
           </Dialog.Portal>
         </Dialog.Root>
 
-        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--border)] bg-[var(--surface)]/96 backdrop-blur">
-          <div className="mx-auto grid max-w-3xl grid-cols-5 px-2 py-2">
+        <nav className="ios-tabbar fixed inset-x-0 bottom-0 z-30 px-3 pb-[calc(0.6rem+env(safe-area-inset-bottom))] pt-2" aria-label="ناوبری اصلی">
+          <div className="ios-tabbar-shell mx-auto grid max-w-md grid-cols-5 gap-1 p-1.5">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = activeView === item.id;
               return (
                 <button
                   key={item.id}
-                  className={cn("grid min-h-14 place-items-center rounded-lg text-[11px] font-bold transition", active ? "bg-[var(--primary-soft)] text-[var(--primary)]" : "text-[var(--muted-foreground)]")}
+                  aria-current={active ? "page" : undefined}
+                  className={cn("ios-tabbar-item flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-[1.35rem] text-[11px] font-extrabold transition", active && "is-active")}
                   onClick={() => setActiveView(item.id)}
+                  type="button"
                 >
-                  <Icon size={19} />
-                  <span>{item.label}</span>
+                  <span className="ios-tabbar-icon">
+                    <Icon size={20} />
+                  </span>
+                  <span className="ios-tabbar-label truncate">{item.label}</span>
                 </button>
               );
             })}
