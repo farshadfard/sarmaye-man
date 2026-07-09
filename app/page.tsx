@@ -1336,7 +1336,7 @@ export default function Home() {
                 <button
                   key={item.id}
                   aria-current={active ? "page" : undefined}
-                  className={cn("oneui-tabbar-item flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-[1.2rem] text-[11px] font-extrabold transition", active && "is-active")}
+                  className={cn("oneui-tabbar-item flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 font-extrabold transition", active && "is-active")}
                   onClick={() => setActiveView(item.id)}
                   type="button"
                 >

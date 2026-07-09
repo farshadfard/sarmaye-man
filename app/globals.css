@@ -12,12 +12,9 @@
   --primary-strong: #115e59;
   --primary-soft: #d9f3ee;
   --primary-ring: rgba(15, 118, 110, 0.18);
-  --oneui-nav-surface: rgba(246, 249, 247, 0.78);
-  --oneui-nav-highlight: rgba(255, 255, 255, 0.88);
-  --oneui-nav-border: rgba(115, 128, 123, 0.18);
-  --oneui-nav-outline: rgba(12, 19, 17, 0.12);
-  --oneui-nav-shadow: rgba(15, 33, 29, 0.18);
-  --oneui-active-surface: rgba(232, 248, 245, 0.92);
+  --oneui-nav-surface: rgba(246, 249, 247, 0.72);
+  --oneui-nav-shadow: rgba(15, 33, 29, 0.12);
+  --oneui-active-surface: rgba(217, 243, 238, 0.82);
   --hero: linear-gradient(135deg, #0f766e 0%, #18332f 100%);
   color-scheme: light;
 }
@@ -37,12 +34,9 @@
   --primary-strong: #2dd4bf;
   --primary-soft: rgba(45, 212, 191, 0.16);
   --primary-ring: rgba(94, 234, 212, 0.22);
-  --oneui-nav-surface: rgba(27, 35, 32, 0.76);
-  --oneui-nav-highlight: rgba(255, 255, 255, 0.09);
-  --oneui-nav-border: rgba(255, 255, 255, 0.1);
-  --oneui-nav-outline: rgba(0, 0, 0, 0.42);
-  --oneui-nav-shadow: rgba(0, 0, 0, 0.4);
-  --oneui-active-surface: rgba(44, 62, 57, 0.92);
+  --oneui-nav-surface: rgba(27, 35, 32, 0.72);
+  --oneui-nav-shadow: rgba(0, 0, 0, 0.24);
+  --oneui-active-surface: rgba(50, 72, 66, 0.82);
   --hero: linear-gradient(135deg, #115e59 0%, #091311 100%);
   color-scheme: dark;
 }
@@ -59,12 +53,9 @@
     --primary-strong: #2dd4bf;
     --primary-soft: rgba(45, 212, 191, 0.16);
     --primary-ring: rgba(94, 234, 212, 0.22);
-    --oneui-nav-surface: rgba(27, 35, 32, 0.76);
-    --oneui-nav-highlight: rgba(255, 255, 255, 0.09);
-    --oneui-nav-border: rgba(255, 255, 255, 0.1);
-    --oneui-nav-outline: rgba(0, 0, 0, 0.42);
-    --oneui-nav-shadow: rgba(0, 0, 0, 0.4);
-    --oneui-active-surface: rgba(44, 62, 57, 0.92);
+    --oneui-nav-surface: rgba(27, 35, 32, 0.72);
+    --oneui-nav-shadow: rgba(0, 0, 0, 0.24);
+    --oneui-active-surface: rgba(50, 72, 66, 0.82);
     --hero: linear-gradient(135deg, #115e59 0%, #091311 100%);
     color-scheme: dark;
   }
@@ -195,35 +186,20 @@ svg {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  border: 1px solid var(--oneui-nav-border);
   border-radius: 1.85rem;
-  background:
-    linear-gradient(180deg, var(--oneui-nav-highlight), transparent 38%),
-    linear-gradient(180deg, var(--oneui-nav-surface), color-mix(in srgb, var(--oneui-nav-surface) 78%, transparent));
-  box-shadow:
-    0 16px 38px var(--oneui-nav-shadow),
-    0 0 0 0.5px var(--oneui-nav-outline),
-    inset 0 1px 0 var(--oneui-nav-highlight);
+  background: var(--oneui-nav-surface);
+  box-shadow: 0 14px 34px var(--oneui-nav-shadow);
   pointer-events: auto;
-  -webkit-backdrop-filter: blur(22px) saturate(145%);
-  backdrop-filter: blur(22px) saturate(145%);
-}
-
-.oneui-tabbar-shell::before {
-  content: "";
-  position: absolute;
-  inset: 1px;
-  z-index: -1;
-  border-radius: inherit;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.18), transparent 44%),
-    linear-gradient(90deg, rgba(94, 234, 212, 0.08), transparent 36%, rgba(15, 118, 110, 0.08));
-  opacity: 0.95;
+  -webkit-backdrop-filter: blur(20px) saturate(130%);
+  backdrop-filter: blur(20px) saturate(130%);
 }
 
 .oneui-tabbar-item {
   position: relative;
+  border-radius: 1.85rem;
   color: var(--muted-foreground);
+  font-size: 0.625rem;
+  line-height: 1.2;
   outline: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -231,15 +207,11 @@ svg {
 .oneui-tabbar-item::before {
   content: "";
   position: absolute;
-  inset: 0.24rem 0.12rem;
-  border-radius: 1.05rem;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--oneui-active-surface) 92%, white), var(--oneui-active-surface));
-  box-shadow:
-    0 0 0 1px var(--oneui-nav-outline),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  inset: 0.32rem;
+  border-radius: inherit;
+  background: var(--oneui-active-surface);
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.96);
   transition:
     opacity 180ms ease,
     transform 180ms ease;
@@ -266,22 +238,14 @@ svg {
 
 .oneui-tabbar-icon {
   display: grid;
-  width: 1.7rem;
-  height: 1.45rem;
+  width: 1.4rem;
+  height: 1.35rem;
   place-items: center;
-  border-radius: 999px;
-  transition:
-    background-color 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms ease;
+  transition: transform 180ms ease;
 }
 
 .oneui-tabbar-item.is-active .oneui-tabbar-icon {
-  background: color-mix(in srgb, var(--primary-soft) 76%, transparent);
-  box-shadow:
-    0 0 0 1px var(--oneui-nav-outline),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28);
-  transform: translateY(-1px);
+  transform: translateY(-0.5px);
 }
 
 .oneui-tabbar-icon svg {
@@ -291,9 +255,10 @@ svg {
 
 .oneui-tabbar-label {
   width: 100%;
-  max-width: 3.9rem;
+  max-width: 3.65rem;
   text-align: center;
-  line-height: 1.25;
+  font-size: inherit;
+  line-height: 1.2;
 }
 
 input,
