@@ -1327,8 +1327,8 @@ export default function Home() {
           </Dialog.Portal>
         </Dialog.Root>
 
-        <nav className="ios-tabbar fixed inset-x-0 bottom-0 z-30 px-3 pb-[calc(0.6rem+env(safe-area-inset-bottom))] pt-2" aria-label="ناوبری اصلی">
-          <div className="ios-tabbar-shell mx-auto grid max-w-md grid-cols-5 gap-1 p-1.5">
+        <nav className="oneui-tabbar fixed inset-x-0 bottom-0 z-30 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-2" aria-label="ناوبری اصلی">
+          <div className="oneui-tabbar-shell mx-auto grid max-w-md grid-cols-5 gap-1.5 p-1.5">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = activeView === item.id;
@@ -1336,14 +1336,14 @@ export default function Home() {
                 <button
                   key={item.id}
                   aria-current={active ? "page" : undefined}
-                  className={cn("ios-tabbar-item flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-[1.35rem] text-[11px] font-extrabold transition", active && "is-active")}
+                  className={cn("oneui-tabbar-item flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-[1.2rem] text-[11px] font-extrabold transition", active && "is-active")}
                   onClick={() => setActiveView(item.id)}
                   type="button"
                 >
-                  <span className="ios-tabbar-icon">
+                  <span className="oneui-tabbar-icon">
                     <Icon size={20} />
                   </span>
-                  <span className="ios-tabbar-label truncate">{item.label}</span>
+                  <span className="oneui-tabbar-label truncate">{item.label}</span>
                 </button>
               );
             })}

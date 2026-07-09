@@ -12,10 +12,12 @@
   --primary-strong: #115e59;
   --primary-soft: #d9f3ee;
   --primary-ring: rgba(15, 118, 110, 0.18);
-  --glass-surface: rgba(255, 255, 255, 0.64);
-  --glass-edge: rgba(255, 255, 255, 0.74);
-  --glass-border: rgba(146, 160, 155, 0.32);
-  --glass-shadow: rgba(15, 33, 29, 0.18);
+  --oneui-nav-surface: rgba(246, 249, 247, 0.78);
+  --oneui-nav-highlight: rgba(255, 255, 255, 0.88);
+  --oneui-nav-border: rgba(115, 128, 123, 0.18);
+  --oneui-nav-outline: rgba(12, 19, 17, 0.12);
+  --oneui-nav-shadow: rgba(15, 33, 29, 0.18);
+  --oneui-active-surface: rgba(232, 248, 245, 0.92);
   --hero: linear-gradient(135deg, #0f766e 0%, #18332f 100%);
   color-scheme: light;
 }
@@ -35,10 +37,12 @@
   --primary-strong: #2dd4bf;
   --primary-soft: rgba(45, 212, 191, 0.16);
   --primary-ring: rgba(94, 234, 212, 0.22);
-  --glass-surface: rgba(23, 31, 28, 0.62);
-  --glass-edge: rgba(255, 255, 255, 0.13);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --glass-shadow: rgba(0, 0, 0, 0.42);
+  --oneui-nav-surface: rgba(27, 35, 32, 0.76);
+  --oneui-nav-highlight: rgba(255, 255, 255, 0.09);
+  --oneui-nav-border: rgba(255, 255, 255, 0.1);
+  --oneui-nav-outline: rgba(0, 0, 0, 0.42);
+  --oneui-nav-shadow: rgba(0, 0, 0, 0.4);
+  --oneui-active-surface: rgba(44, 62, 57, 0.92);
   --hero: linear-gradient(135deg, #115e59 0%, #091311 100%);
   color-scheme: dark;
 }
@@ -55,10 +59,12 @@
     --primary-strong: #2dd4bf;
     --primary-soft: rgba(45, 212, 191, 0.16);
     --primary-ring: rgba(94, 234, 212, 0.22);
-    --glass-surface: rgba(23, 31, 28, 0.62);
-    --glass-edge: rgba(255, 255, 255, 0.13);
-    --glass-border: rgba(255, 255, 255, 0.12);
-    --glass-shadow: rgba(0, 0, 0, 0.42);
+    --oneui-nav-surface: rgba(27, 35, 32, 0.76);
+    --oneui-nav-highlight: rgba(255, 255, 255, 0.09);
+    --oneui-nav-border: rgba(255, 255, 255, 0.1);
+    --oneui-nav-outline: rgba(0, 0, 0, 0.42);
+    --oneui-nav-shadow: rgba(0, 0, 0, 0.4);
+    --oneui-active-surface: rgba(44, 62, 57, 0.92);
     --hero: linear-gradient(135deg, #115e59 0%, #091311 100%);
     color-scheme: dark;
   }
@@ -173,108 +179,119 @@ svg {
   box-shadow: 0 -14px 24px rgba(15, 33, 29, 0.08);
 }
 
-.ios-tabbar {
+.oneui-tabbar {
   pointer-events: none;
 }
 
-.ios-tabbar::before {
+.oneui-tabbar::before {
   content: "";
   position: absolute;
-  inset: -3rem 0 0;
+  inset: -3.5rem 0 0;
   z-index: -1;
-  background: linear-gradient(180deg, transparent 0%, var(--background) 72%);
+  background: linear-gradient(180deg, transparent 0%, var(--background) 78%);
 }
 
-.ios-tabbar-shell {
+.oneui-tabbar-shell {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  border: 1px solid var(--glass-border);
-  border-radius: 2rem;
+  border: 1px solid var(--oneui-nav-border);
+  border-radius: 1.85rem;
   background:
-    linear-gradient(135deg, var(--glass-edge), transparent 32%),
-    linear-gradient(180deg, var(--glass-surface), color-mix(in srgb, var(--glass-surface) 72%, transparent));
+    linear-gradient(180deg, var(--oneui-nav-highlight), transparent 38%),
+    linear-gradient(180deg, var(--oneui-nav-surface), color-mix(in srgb, var(--oneui-nav-surface) 78%, transparent));
   box-shadow:
-    0 18px 52px var(--glass-shadow),
-    inset 0 1px 0 var(--glass-edge),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+    0 16px 38px var(--oneui-nav-shadow),
+    0 0 0 0.5px var(--oneui-nav-outline),
+    inset 0 1px 0 var(--oneui-nav-highlight);
   pointer-events: auto;
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+  backdrop-filter: blur(22px) saturate(145%);
 }
 
-.ios-tabbar-shell::before {
+.oneui-tabbar-shell::before {
   content: "";
   position: absolute;
   inset: 1px;
   z-index: -1;
   border-radius: inherit;
   background:
-    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.42), transparent 30%),
-    radial-gradient(circle at 80% 100%, rgba(94, 234, 212, 0.22), transparent 34%);
-  opacity: 0.8;
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.18), transparent 44%),
+    linear-gradient(90deg, rgba(94, 234, 212, 0.08), transparent 36%, rgba(15, 118, 110, 0.08));
+  opacity: 0.95;
 }
 
-.ios-tabbar-item {
+.oneui-tabbar-item {
   position: relative;
   color: var(--muted-foreground);
   outline: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-.ios-tabbar-item::before {
+.oneui-tabbar-item::before {
   content: "";
   position: absolute;
-  inset: 0.28rem 0.2rem;
-  border-radius: 999px;
+  inset: 0.24rem 0.12rem;
+  border-radius: 1.05rem;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.7), transparent 36%),
-    linear-gradient(180deg, var(--primary-soft), color-mix(in srgb, var(--primary-soft) 60%, var(--surface)));
+    linear-gradient(180deg, color-mix(in srgb, var(--oneui-active-surface) 92%, white), var(--oneui-active-surface));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.48),
-    0 9px 18px rgba(15, 118, 110, 0.14);
+    0 0 0 1px var(--oneui-nav-outline),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
   opacity: 0;
-  transform: scale(0.84);
+  transform: scale(0.9);
   transition:
     opacity 180ms ease,
     transform 180ms ease;
 }
 
-.ios-tabbar-item:focus-visible {
+.oneui-tabbar-item:focus-visible {
   box-shadow: 0 0 0 3px var(--primary-ring);
 }
 
-.ios-tabbar-item.is-active {
+.oneui-tabbar-item.is-active {
   color: var(--primary);
 }
 
-.ios-tabbar-item.is-active::before {
+.oneui-tabbar-item.is-active::before {
   opacity: 1;
   transform: scale(1);
 }
 
-.ios-tabbar-icon,
-.ios-tabbar-label {
+.oneui-tabbar-icon,
+.oneui-tabbar-label {
   position: relative;
   z-index: 1;
 }
 
-.ios-tabbar-icon {
+.oneui-tabbar-icon {
   display: grid;
-  width: 1.55rem;
-  height: 1.55rem;
+  width: 1.7rem;
+  height: 1.45rem;
   place-items: center;
+  border-radius: 999px;
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
 
-.ios-tabbar-icon svg {
+.oneui-tabbar-item.is-active .oneui-tabbar-icon {
+  background: color-mix(in srgb, var(--primary-soft) 76%, transparent);
+  box-shadow:
+    0 0 0 1px var(--oneui-nav-outline),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+.oneui-tabbar-icon svg {
   width: 1.25rem;
   height: 1.25rem;
-  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.18));
 }
 
-.ios-tabbar-label {
+.oneui-tabbar-label {
   width: 100%;
-  max-width: 3.8rem;
+  max-width: 3.9rem;
   text-align: center;
   line-height: 1.25;
 }
