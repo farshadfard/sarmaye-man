@@ -207,7 +207,7 @@ svg {
 .oneui-tabbar-item::before {
   content: "";
   position: absolute;
-  inset: 0.32rem;
+  inset: 4px;
   border-radius: inherit;
   background: var(--oneui-active-surface);
   opacity: 0;
