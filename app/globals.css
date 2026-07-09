@@ -198,7 +198,7 @@ svg {
   position: relative;
   border-radius: 1.85rem;
   color: var(--muted-foreground);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   line-height: 1.2;
   outline: none;
   -webkit-tap-highlight-color: transparent;
@@ -207,7 +207,7 @@ svg {
 .oneui-tabbar-item::before {
   content: "";
   position: absolute;
-  inset: 4px;
+  inset: 0;
   border-radius: inherit;
   background: var(--oneui-active-surface);
   opacity: 0;
