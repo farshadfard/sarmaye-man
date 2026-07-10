@@ -1669,7 +1669,7 @@ export default function Home() {
         {activeView !== "assetHistory" && <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--background)]/92 backdrop-blur">
           <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
             <div>
-              <p className="text-lg font-black">{APP_NAME_QUOTED}</p>
+              <p className="text-lg font-black">{APP_NAME}</p>
             </div>
             <div className="flex items-center gap-2">
               {appDisplayMode === "browser" && (
