@@ -62,7 +62,7 @@ type BeforeInstallPromptEvent = Event & {
 const NEW_ASSET_VALUE = "__new_asset__";
 const APP_NAME = "سرمایه من";
 const APP_NAME_QUOTED = `«${APP_NAME}»`;
-const APP_VERSION = import.meta.env.VITE_APP_VERSION ?? "0.1.0";
+const APP_VERSION = import.meta.env.VITE_APP_VERSION ?? "1.0.0";
 const GITHUB_REPO_URL = "https://github.com/farshadfard/sarmaye-man";
 const PRICE_SYNC_ENDPOINT = import.meta.env.PROD ? "https://api.farshadfard.com/sarmaye-man-api/prices/sync" : "/api/prices/sync";
 const IS_NATIVE_ANDROID = import.meta.env.VITE_NATIVE_ANDROID === "1";
@@ -642,8 +642,8 @@ function PersianDatePicker({ value, onChange }: { onChange: (iso: string) => voi
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-black/35" />
-        <Dialog.Content className="fixed right-4 left-4 top-20 z-50 mx-auto max-w-sm rounded-lg bg-[var(--surface)] p-4 shadow-2xl">
+        <Dialog.Overlay className="dialog-overlay fixed inset-0 z-40 bg-black/35" />
+        <Dialog.Content className="dialog-panel fixed right-4 left-4 top-20 z-50 mx-auto max-w-sm rounded-lg bg-[var(--surface)] p-4 shadow-2xl">
           <Dialog.Title className="sr-only">انتخاب تاریخ شمسی</Dialog.Title>
           <div className="flex items-center justify-between gap-2">
             <button className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-bold" onClick={() => moveMonth(-1)} type="button">
@@ -1753,8 +1753,8 @@ export default function Home() {
           }}
         >
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-50 bg-black/55" />
-            <Dialog.Content className="install-guide-fullscreen fixed inset-0 z-50 overflow-y-auto bg-[var(--background)]">
+            <Dialog.Overlay className="dialog-overlay fixed inset-0 z-50 bg-black/55" />
+            <Dialog.Content className="dialog-panel install-guide-fullscreen fixed inset-0 z-50 overflow-y-auto bg-[var(--background)]">
               <InstallGuideContent
                 canPromptInstall={Boolean(installPromptEvent)}
                 fullscreen
@@ -1768,8 +1768,8 @@ export default function Home() {
 
         <Dialog.Root open={installGuideOpen} onOpenChange={setInstallGuideOpen}>
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-50 bg-black/45" />
-            <Dialog.Content className="install-guide-dialog fixed z-50 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-2xl">
+            <Dialog.Overlay className="dialog-overlay fixed inset-0 z-50 bg-black/45" />
+            <Dialog.Content className="dialog-panel install-guide-dialog fixed z-50 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] shadow-2xl">
               <div className="flex justify-end px-4 pt-4">
                 <Dialog.Close className="rounded-md p-1 hover:bg-[var(--muted)]">
                   <IconX size={18} />
@@ -1787,8 +1787,8 @@ export default function Home() {
 
         <Dialog.Root open={aboutOpen} onOpenChange={setAboutOpen}>
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-50 bg-black/45" />
-            <Dialog.Content className="price-dialog fixed z-50 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-2xl">
+            <Dialog.Overlay className="dialog-overlay fixed inset-0 z-50 bg-black/45" />
+            <Dialog.Content className="dialog-panel price-dialog fixed z-50 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-2xl">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <Dialog.Title className="text-lg font-extrabold">{APP_NAME_QUOTED}</Dialog.Title>
@@ -1831,8 +1831,8 @@ export default function Home() {
           }}
         >
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-50 bg-black/45" />
-            <Dialog.Content className="onboarding-dialog fixed z-50 overflow-hidden rounded-lg bg-[var(--surface)] shadow-2xl">
+            <Dialog.Overlay className="dialog-overlay fixed inset-0 z-50 bg-black/45" />
+            <Dialog.Content className="dialog-panel onboarding-dialog fixed z-50 overflow-hidden rounded-lg bg-[var(--surface)] shadow-2xl">
               <div className="onboarding-image-wrap">
                 <div
                   aria-hidden="true"
@@ -1873,8 +1873,8 @@ export default function Home() {
 
         <Dialog.Root open={Boolean(pendingBackup)} onOpenChange={(open) => !open && setPendingBackup(null)}>
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-40 bg-black/45" />
-            <Dialog.Content className="price-dialog fixed z-50 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-2xl">
+            <Dialog.Overlay className="dialog-overlay fixed inset-0 z-40 bg-black/45" />
+            <Dialog.Content className="dialog-panel price-dialog fixed z-50 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-2xl">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <Dialog.Title className="text-lg font-extrabold">بازگردانی اطلاعات</Dialog.Title>
@@ -1912,8 +1912,8 @@ export default function Home() {
 
         <Dialog.Root open={Boolean(pendingDeleteAssetId)} onOpenChange={(open) => !open && setPendingDeleteAssetId("")}>
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-40 bg-black/45" />
-            <Dialog.Content className="price-dialog fixed z-50 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-2xl">
+            <Dialog.Overlay className="dialog-overlay fixed inset-0 z-40 bg-black/45" />
+            <Dialog.Content className="dialog-panel price-dialog fixed z-50 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-2xl">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <Dialog.Title className="text-lg font-extrabold">حذف دارایی</Dialog.Title>
@@ -1944,8 +1944,8 @@ export default function Home() {
 
         <Dialog.Root open={Boolean(priceEditor)} onOpenChange={(open) => !open && closePriceEditor()}>
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-40 bg-black/45" />
-            <Dialog.Content className="price-dialog fixed z-50 flex flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-2xl">
+            <Dialog.Overlay className="dialog-overlay fixed inset-0 z-40 bg-black/45" />
+            <Dialog.Content className="dialog-panel price-dialog fixed z-50 flex flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-2xl">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <Dialog.Title className="text-lg font-extrabold">
@@ -1999,9 +1999,9 @@ export default function Home() {
 
         <Dialog.Root open={Boolean(editingAssetId)} onOpenChange={(open) => !open && closeEditAsset()}>
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 z-40 bg-black/45" />
+            <Dialog.Overlay className="dialog-overlay fixed inset-0 z-40 bg-black/45" />
             <Dialog.Content
-              className="edit-dialog fixed z-50 flex flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-2xl"
+              className="dialog-panel edit-dialog fixed z-50 flex flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-2xl"
             >
               <div className="flex items-start justify-between gap-3">
                 <Dialog.Title className="text-lg font-extrabold">ویرایش دارایی</Dialog.Title>

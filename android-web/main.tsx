@@ -5,6 +5,7 @@ import Home from "../app/page";
 
 document.documentElement.lang = "fa";
 document.documentElement.dir = "rtl";
+document.documentElement.dataset.nativePlatform = "android";
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Root element not found");

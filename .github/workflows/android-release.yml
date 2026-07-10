@@ -103,8 +103,8 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.name }}"
           mkdir -p release-assets
-          cp android/app/build/outputs/apk/release/app-release.apk "release-assets/sarmaye-man-android-v$VERSION.apk"
-          (cd release-assets && sha256sum "sarmaye-man-android-v$VERSION.apk" > "sarmaye-man-android-v$VERSION.apk.sha256")
+          cp android/app/build/outputs/apk/release/app-release.apk "release-assets/sarmaye-man-v$VERSION.apk"
+          (cd release-assets && sha256sum "sarmaye-man-v$VERSION.apk" > "sarmaye-man-v$VERSION.apk.sha256")
 
       - name: Publish GitHub Release
         shell: bash

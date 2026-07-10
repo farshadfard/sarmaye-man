@@ -33,6 +33,7 @@
   --oneui-nav-shadow: rgba(15, 33, 29, 0.12);
   --oneui-active-surface: rgba(217, 243, 238, 0.82);
   --hero: linear-gradient(135deg, #0f766e 0%, #18332f 100%);
+  --native-statusbar-top: 0px;
   color-scheme: light;
 }
 
@@ -105,9 +106,14 @@ html {
   direction: rtl;
 }
 
+:root[data-native-platform="android"] {
+  --native-statusbar-top: max(env(safe-area-inset-top), 1.5rem);
+}
+
 body {
   min-width: 320px;
   margin: 0;
+  padding-top: var(--native-statusbar-top);
   background:
     linear-gradient(180deg, rgba(15, 118, 110, 0.06), transparent 260px),
     var(--background);
@@ -165,7 +171,7 @@ svg {
 }
 
 .app-content.is-locked {
-  height: calc(100dvh - 4.25rem);
+  height: calc(100dvh - 4.25rem - var(--native-statusbar-top));
   min-height: 0;
   overflow: visible;
 }
@@ -216,7 +222,7 @@ svg {
 
 .history-detail-heading {
   position: sticky;
-  top: 4.15rem;
+  top: calc(4.15rem + var(--native-statusbar-top));
   z-index: 5;
   margin-inline: -1rem;
   padding: 0.75rem 1rem;
@@ -227,20 +233,22 @@ svg {
 }
 
 .edit-dialog {
+  --dialog-transform-base: translate(-50%, -50%);
   left: 50%;
   top: 50%;
   width: min(28rem, calc(100vw - 2rem));
   height: min(42rem, calc(100dvh - 2rem));
   max-height: calc(100dvh - 2rem);
-  transform: translate(-50%, -50%);
+  transform: var(--dialog-transform-base);
 }
 
 .price-dialog {
+  --dialog-transform-base: translate(-50%, -50%);
   left: 50%;
   top: 50%;
   width: min(27rem, calc(100vw - 2rem));
   max-height: calc(100dvh - 2rem);
-  transform: translate(-50%, -50%);
+  transform: var(--dialog-transform-base);
 }
 
 .edit-form {
@@ -265,12 +273,13 @@ svg {
 }
 
 .onboarding-dialog {
+  --dialog-transform-base: translate(-50%, -50%);
   left: 50%;
   top: 50%;
   width: min(27rem, calc(100vw - 1.5rem));
   max-height: calc(100dvh - 2rem);
   border: 1px solid var(--border);
-  transform: translate(-50%, -50%);
+  transform: var(--dialog-transform-base);
 }
 
 .onboarding-image-wrap {
@@ -314,17 +323,88 @@ svg {
 }
 
 .install-guide-fullscreen {
+  --dialog-transform-base: translate3d(0, 0, 0);
   display: grid;
   place-items: center;
   padding: max(1.25rem, env(safe-area-inset-top)) 1rem max(1.25rem, env(safe-area-inset-bottom));
 }
 
 .install-guide-dialog {
+  --dialog-transform-base: translate(-50%, -50%);
   left: 50%;
   top: 50%;
   width: min(27rem, calc(100vw - 1.5rem));
   max-height: calc(100dvh - 2rem);
-  transform: translate(-50%, -50%);
+  transform: var(--dialog-transform-base);
+}
+
+.dialog-panel {
+  transform: var(--dialog-transform-base, translate3d(0, 0, 0));
+  transform-origin: center;
+  will-change: opacity, transform;
+}
+
+.dialog-overlay[data-state="open"] {
+  animation: dialog-overlay-in 180ms ease-out both;
+}
+
+.dialog-overlay[data-state="closed"] {
+  animation: dialog-overlay-out 140ms ease-in both;
+}
+
+.dialog-panel[data-state="open"] {
+  animation: dialog-panel-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dialog-panel[data-state="closed"] {
+  animation: dialog-panel-out 150ms ease-in both;
+}
+
+@keyframes dialog-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-panel-in {
+  from {
+    opacity: 0;
+    transform: var(--dialog-transform-base, translate3d(0, 0, 0)) translateY(0.7rem) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: var(--dialog-transform-base, translate3d(0, 0, 0)) translateY(0) scale(1);
+  }
+}
+
+@keyframes dialog-panel-out {
+  from {
+    opacity: 1;
+    transform: var(--dialog-transform-base, translate3d(0, 0, 0)) translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: var(--dialog-transform-base, translate3d(0, 0, 0)) translateY(0.45rem) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog-overlay[data-state],
+  .dialog-panel[data-state] {
+    animation-duration: 1ms;
+  }
 }
 
 .install-guide-content {
