@@ -39,7 +39,7 @@ test("keeps the Persian app shell and metadata correct", async () => {
   assert.doesNotMatch(page, /سرمایه باقی‌مانده/);
   assert.doesNotMatch(page, /سود محقق‌شده/);
   assert.match(page, /inline-flex flex-row items-center gap-1/);
-  assert.match(manifest, /دفتر دارایی|Ø¯ÙØªØ± Ø¯Ø§Ø±Ø§ÛŒÛŒ/);
+  assert.match(manifest, /سرمایه من|Ø³Ø±Ù…Ø§ÛŒÙ‡ Ù…Ù†/);
   assert.match(sw, /CACHE_NAME/);
   assert.doesNotMatch(`${layout}\n${manifest}\n${sw}`, /https?:\/\//i);
   assert.doesNotMatch(packageJson, /react-loading-skeleton|@fontsource|lucide-react/);

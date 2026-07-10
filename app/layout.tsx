@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "دفتر دارایی",
+  title: "سرمایه من",
   description: "ثبت محلی دارایی‌ها، قیمت روز و سود سرمایه به تومان.",
   manifest: "/manifest.webmanifest",
   icons: {
@@ -29,4 +29,3 @@ export default function RootLayout({
     </html>
   );
 }
-

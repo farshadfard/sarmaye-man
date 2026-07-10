@@ -220,7 +220,7 @@ const onboardingItems: Array<{ description: string; imageSrc: string; title: str
     title: "همیشه رایگان",
   },
   {
-    description: "داده‌های مالی شما فقط روی همین مرورگر ذخیره می‌شود.",
+    description: "داده‌های مالی شما فقط روی همین دستگاه ذخیره می‌شود.",
     imageSrc: "/onboarding-privacy.png",
     title: "حریم خصوصی داده‌ها",
   },
@@ -1167,7 +1167,7 @@ export default function Home() {
 
       {activeView === "settings" && (
         <div className="grid gap-4">
-          <PageTitle title="تنظیمات" subtitle="داده‌ها فقط روی همین مرورگر می‌مانند" />
+          <PageTitle title="تنظیمات" subtitle="داده‌ها فقط روی همین دستگاه می‌مانند" />
           <Card className="grid gap-3">
             <div>
               <h2 className="font-extrabold">حالت نمایش</h2>
@@ -1213,7 +1213,7 @@ export default function Home() {
           </Card>
           <Card className="grid gap-2 text-sm text-[var(--muted-foreground)]">
             <p>ذخیره اصلی با IndexedDB انجام می‌شود.</p>
-            <p>برای قیمت زنده فقط درخواست به TGJU ارسال می‌شود و اطلاعات دارایی شما از مرورگر خارج نمی‌شود.</p>
+            <p>برای قیمت زنده فقط درخواست به TGJU ارسال می‌شود و اطلاعات دارایی شما از دستگاه خارج نمی‌شود.</p>
           </Card>
         </div>
       )}
@@ -1226,7 +1226,7 @@ export default function Home() {
         <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--background)]/92 backdrop-blur">
           <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
             <div>
-              <p className="text-xs text-[var(--muted-foreground)]">دفتر دارایی</p>
+              <p className="text-xs text-[var(--muted-foreground)]">سرمایه من</p>
               <p className="text-lg font-black">سرمایه من</p>
             </div>
             <Dialog.Root>
@@ -1241,7 +1241,7 @@ export default function Home() {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <Dialog.Title className="text-lg font-extrabold">بکاپ سریع</Dialog.Title>
-                      <Dialog.Description className="mt-1 text-sm text-[var(--muted-foreground)]">خروجی و ورود فایل JSON برای انتقال بین مرورگرها.</Dialog.Description>
+                      <Dialog.Description className="mt-1 text-sm text-[var(--muted-foreground)]">خروجی و ورود فایل JSON برای انتقال بین دستگاه‌ها.</Dialog.Description>
                     </div>
                     <Dialog.Close className="rounded-md p-1 hover:bg-[var(--muted)]">
                       <IconX size={18} />

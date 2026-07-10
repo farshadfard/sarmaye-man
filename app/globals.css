@@ -180,8 +180,8 @@ svg {
 }
 
 .onboarding-image-wrap {
-  height: min(56dvh, 31rem);
-  min-height: 22rem;
+  height: min(68dvh, 38rem);
+  min-height: min(22rem, calc(100dvh - 12rem));
   padding: 0.75rem 0.75rem 0;
 }
 
@@ -192,7 +192,7 @@ svg {
   background-color: color-mix(in srgb, var(--primary-soft) 45%, var(--surface));
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
 .onboarding-copy {
@@ -232,10 +232,13 @@ svg {
 }
 
 .oneui-tabbar-shell {
+  --oneui-tabbar-radius: 1.85rem;
+  --oneui-tabbar-inset: 0.375rem;
+  --oneui-tabbar-selection-radius: max(0px, calc(var(--oneui-tabbar-radius) - var(--oneui-tabbar-inset)));
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  border-radius: 1.85rem;
+  border-radius: var(--oneui-tabbar-radius);
   background: var(--oneui-nav-surface);
   box-shadow: 0 14px 34px var(--oneui-nav-shadow);
   pointer-events: auto;
@@ -245,7 +248,7 @@ svg {
 
 .oneui-tabbar-item {
   position: relative;
-  border-radius: 1.85rem;
+  border-radius: var(--oneui-tabbar-selection-radius);
   color: var(--muted-foreground);
   font-size: 0.6875rem;
   line-height: 1.2;
