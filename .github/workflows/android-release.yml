@@ -124,8 +124,8 @@ jobs:
           fi
           NOTES="${RELEASE_NOTES:-Android release v$VERSION}"
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --title "سرمایه من Android v$VERSION" --notes "$NOTES" "${FLAGS[@]}"
+            gh release edit "$TAG" --title "Sarmaye Man Android v$VERSION" --notes "$NOTES" "${FLAGS[@]}"
             gh release upload "$TAG" release-assets/* --clobber
           else
-            gh release create "$TAG" release-assets/* --target "$GITHUB_SHA" --title "سرمایه من Android v$VERSION" --notes "$NOTES" "${FLAGS[@]}"
+            gh release create "$TAG" release-assets/* --target "$GITHUB_SHA" --title "Sarmaye Man Android v$VERSION" --notes "$NOTES" "${FLAGS[@]}"
           fi
