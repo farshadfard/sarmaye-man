@@ -3,6 +3,9 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   base: "./",
+  define: {
+    "import.meta.env.VITE_NATIVE_ANDROID": JSON.stringify("1"),
+  },
   publicDir: "../public",
   root: "android-web",
   build: {

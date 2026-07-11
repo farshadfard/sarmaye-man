@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
-def envVersionCode = (System.getenv("ANDROID_VERSION_CODE") ?: "1") as Integer
-def envVersionName = System.getenv("ANDROID_VERSION_NAME") ?: "0.1.0"
+def envVersionCode = (System.getenv("ANDROID_VERSION_CODE") ?: "10001") as Integer
+def envVersionName = System.getenv("ANDROID_VERSION_NAME") ?: "1.0.1"
 def releaseStoreFile = System.getenv("ANDROID_KEYSTORE_PATH")
 def releaseStorePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
 def releaseKeyAlias = System.getenv("ANDROID_KEY_ALIAS")

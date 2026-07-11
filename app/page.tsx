@@ -59,10 +59,15 @@ type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 };
+declare global {
+  interface Window {
+    __sarmayeManHandleAndroidBack?: () => boolean;
+  }
+}
 const NEW_ASSET_VALUE = "__new_asset__";
 const APP_NAME = "سرمایه من";
 const APP_NAME_QUOTED = `«${APP_NAME}»`;
-const APP_VERSION = import.meta.env.VITE_APP_VERSION ?? "1.0.0";
+const APP_VERSION = import.meta.env.VITE_APP_VERSION ?? "1.0.1";
 const GITHUB_REPO_URL = "https://github.com/farshadfard/sarmaye-man";
 const PRICE_SYNC_ENDPOINT = import.meta.env.PROD ? "https://api.farshadfard.com/sarmaye-man-api/prices/sync" : "/api/prices/sync";
 const IS_NATIVE_ANDROID = import.meta.env.VITE_NATIVE_ANDROID === "1";
@@ -749,6 +754,7 @@ export default function Home() {
   const [customHistoryFrom, setCustomHistoryFrom] = useState(retentionStart(todayIso()));
   const [customHistoryTo, setCustomHistoryTo] = useState(todayIso());
   const [historyChartMode, setHistoryChartMode] = useState<HistoryChartMode>("totalProfit");
+  const [historyClosing, setHistoryClosing] = useState(false);
   const [pendingDeleteAssetId, setPendingDeleteAssetId] = useState("");
   const [pendingBackup, setPendingBackup] = useState<BackupConfirmationState | null>(null);
   const [editingAssetId, setEditingAssetId] = useState("");
@@ -760,6 +766,9 @@ export default function Home() {
   const [editFee, setEditFee] = useState("");
   const [editDate, setEditDate] = useState(todayIso());
   const [editNote, setEditNote] = useState("");
+  const androidBackHandlerRef = useRef<() => boolean>(() => false);
+  const lastAndroidExitBackAtRef = useRef(0);
+  const historyCloseTimerRef = useRef<number | null>(null);
 
   const today = localDateKey();
   const summary = useMemo(() => computePortfolio(snapshot, today), [snapshot, today]);
@@ -857,9 +866,26 @@ export default function Home() {
     };
   }, []);
 
+  const closeAssetHistory = useCallback(() => {
+    if (historyClosing) return;
+    setHistoryClosing(true);
+    if (historyCloseTimerRef.current !== null) window.clearTimeout(historyCloseTimerRef.current);
+    historyCloseTimerRef.current = window.setTimeout(() => {
+      historyCloseTimerRef.current = null;
+      if (new URLSearchParams(window.location.search).has("asset")) {
+        window.history.back();
+      } else {
+        setHistoryAssetId("");
+        setActiveView("assets");
+        setHistoryClosing(false);
+      }
+    }, 180);
+  }, [historyClosing]);
+
   useEffect(() => {
     function handlePopState() {
       const assetId = new URLSearchParams(window.location.search).get("asset") ?? "";
+      setHistoryClosing(false);
       if (assetId) {
         setHistoryAssetId(assetId);
         setActiveView("assetHistory");
@@ -871,6 +897,39 @@ export default function Home() {
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (historyCloseTimerRef.current !== null) window.clearTimeout(historyCloseTimerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!IS_NATIVE_ANDROID) return undefined;
+    window.__sarmayeManHandleAndroidBack = () => androidBackHandlerRef.current();
+    return () => {
+      delete window.__sarmayeManHandleAndroidBack;
+    };
+  }, []);
+
+  useEffect(() => {
+    androidBackHandlerRef.current = () => {
+      if (activeView === "assetHistory") {
+        if (!historyClosing) closeAssetHistory();
+        return true;
+      }
+
+      const now = Date.now();
+      if (now - lastAndroidExitBackAtRef.current < 2200) {
+        lastAndroidExitBackAtRef.current = 0;
+        return false;
+      }
+
+      lastAndroidExitBackAtRef.current = now;
+      showToast("برای خروج، دوباره دکمه بازگشت را بزنید.");
+      return true;
+    };
+  }, [activeView, closeAssetHistory, historyClosing]);
 
   useEffect(() => {
     if (!loaded) return;
@@ -889,17 +948,9 @@ export default function Home() {
     setHistoryAssetId(assetId);
     setHistoryRange(30);
     setHistoryChartMode("totalProfit");
+    setHistoryClosing(false);
     window.history.pushState({ assetId }, "", `?asset=${encodeURIComponent(assetId)}`);
     setActiveView("assetHistory");
-  }
-
-  function closeAssetHistory() {
-    if (new URLSearchParams(window.location.search).has("asset")) {
-      window.history.back();
-    } else {
-      setHistoryAssetId("");
-      setActiveView("assets");
-    }
   }
 
   function navigateTo(view: Exclude<View, "assetHistory">) {
@@ -1304,6 +1355,7 @@ export default function Home() {
         <AssetHistoryPage
           assetName={selectedHistoryAsset.name}
           chartMode={historyChartMode}
+          closing={historyClosing}
           from={historyFrom}
           holding={selectedHistoryHolding}
           onBack={closeAssetHistory}
@@ -2302,6 +2354,7 @@ function HoldingCard({
 function AssetHistoryPage({
   assetName,
   chartMode,
+  closing,
   from,
   holding,
   onBack,
@@ -2315,6 +2368,7 @@ function AssetHistoryPage({
 }: {
   assetName: string;
   chartMode: HistoryChartMode;
+  closing: boolean;
   from: string;
   holding: ReturnType<typeof computePortfolio>["holdings"][number];
   onBack: () => void;
@@ -2340,7 +2394,7 @@ function AssetHistoryPage({
   const latestPoint = points.at(-1);
 
   return (
-    <div className="fixed inset-0 z-40 overflow-y-auto bg-[var(--background)]">
+    <div className="asset-history-page fixed inset-x-0 bottom-0 z-40 overflow-y-auto bg-[var(--background)]" data-state={closing ? "closed" : "open"}>
       <header className="sticky top-0 z-10 border-b border-[var(--border)] bg-[var(--background)]/94 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
           <button

@@ -1,6 +1,6 @@
 {
   "name": "sarmaye-man",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Persian local-first PWA for tracking assets, live prices, and profit/loss.",
   "license": "BSD-3-Clause",
   "private": true,
