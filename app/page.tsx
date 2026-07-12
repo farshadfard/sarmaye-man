@@ -67,7 +67,7 @@ declare global {
 const NEW_ASSET_VALUE = "__new_asset__";
 const APP_NAME = "سرمایه من";
 const APP_NAME_QUOTED = `«${APP_NAME}»`;
-const APP_VERSION = import.meta.env.VITE_APP_VERSION ?? "1.0.1";
+const APP_VERSION = import.meta.env.VITE_APP_VERSION ?? "1.0.2";
 const GITHUB_REPO_URL = "https://github.com/farshadfard/sarmaye-man";
 const PRICE_SYNC_ENDPOINT = import.meta.env.PROD ? "https://api.farshadfard.com/sarmaye-man-api/prices/sync" : "/api/prices/sync";
 const IS_NATIVE_ANDROID = import.meta.env.VITE_NATIVE_ANDROID === "1";
@@ -542,8 +542,12 @@ function Button({
   );
 }
 
+function cardClasses(className?: string) {
+  return cn("rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm", className);
+}
+
 function Card({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <section className={cn("rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm", className)}>{children}</section>;
+  return <section className={cardClasses(className)}>{children}</section>;
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -730,6 +734,7 @@ export default function Home() {
   const [installPlatform] = useState<InstallPlatform>(() => getInstallPlatform());
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const autoRefreshStartedRef = useRef(false);
+  const assetCardRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const [entryMode, setEntryMode] = useState<"quick" | "transaction">("quick");
   const [category, setCategory] = useState<AssetCategory>("gold");
@@ -755,6 +760,7 @@ export default function Home() {
   const [customHistoryTo, setCustomHistoryTo] = useState(todayIso());
   const [historyChartMode, setHistoryChartMode] = useState<HistoryChartMode>("totalProfit");
   const [historyClosing, setHistoryClosing] = useState(false);
+  const [pendingAssetScrollId, setPendingAssetScrollId] = useState("");
   const [pendingDeleteAssetId, setPendingDeleteAssetId] = useState("");
   const [pendingBackup, setPendingBackup] = useState<BackupConfirmationState | null>(null);
   const [editingAssetId, setEditingAssetId] = useState("");
@@ -772,6 +778,21 @@ export default function Home() {
 
   const today = localDateKey();
   const summary = useMemo(() => computePortfolio(snapshot, today), [snapshot, today]);
+  const dashboardHoldings = useMemo(() => {
+    const latestTransactionByAsset = new Map<string, string>();
+    for (const transaction of snapshot.transactions) {
+      const current = latestTransactionByAsset.get(transaction.assetId);
+      if (!current || transaction.date > current) latestTransactionByAsset.set(transaction.assetId, transaction.date);
+    }
+
+    return [...summary.holdings]
+      .sort((a, b) => {
+        const bDate = latestTransactionByAsset.get(b.asset.id) ?? b.asset.createdAt;
+        const aDate = latestTransactionByAsset.get(a.asset.id) ?? a.asset.createdAt;
+        return bDate.localeCompare(aDate);
+      })
+      .slice(0, 4);
+  }, [snapshot.transactions, summary.holdings]);
   const todayPortfolioPoint = useMemo(() => computePortfolioHistory(snapshot, today, today)[0], [snapshot, today]);
   const filteredInstruments = instruments.filter((instrument) => instrument.category === category);
   const filteredEditInstruments = instruments.filter((instrument) => instrument.category === editCategory);
@@ -937,6 +958,16 @@ export default function Home() {
   }, [loaded, snapshot]);
 
   useEffect(() => {
+    if (activeView !== "assets" || !pendingAssetScrollId) return undefined;
+    const frameId = window.requestAnimationFrame(() => {
+      assetCardRefs.current[pendingAssetScrollId]?.scrollIntoView({ behavior: "smooth", block: "start" });
+      assetCardRefs.current[pendingAssetScrollId]?.focus({ preventScroll: true });
+      setPendingAssetScrollId("");
+    });
+    return () => window.cancelAnimationFrame(frameId);
+  }, [activeView, pendingAssetScrollId, summary.holdings.length]);
+
+  useEffect(() => {
     document.documentElement.dataset.theme = themePreference;
   }, [themePreference]);
 
@@ -957,6 +988,11 @@ export default function Home() {
     if (new URLSearchParams(window.location.search).has("asset")) window.history.replaceState({}, "", window.location.pathname);
     setHistoryAssetId("");
     setActiveView(view);
+  }
+
+  function openAssetInAssets(assetId: string) {
+    setPendingAssetScrollId(assetId);
+    navigateTo("assets");
   }
 
   function setThemePreference(preference: ThemePreference) {
@@ -1423,7 +1459,7 @@ export default function Home() {
             {summary.holdings.length === 0 ? (
               <Card className="text-center text-sm text-[var(--muted-foreground)]">هنوز دارایی ثبت نشده است.</Card>
             ) : (
-              summary.holdings.slice(0, 4).map((holding) => <HoldingCard key={holding.asset.id} holding={holding} onEdit={openEditAsset} onRemove={removeAsset} />)
+              dashboardHoldings.map((holding) => <HoldingCard key={holding.asset.id} holding={holding} onEdit={openEditAsset} onOpenAsset={openAssetInAssets} onRemove={removeAsset} />)
             )}
           </section>
         </div>
@@ -1442,15 +1478,24 @@ export default function Home() {
           </div>
           <div className="locked-view-list">
             {summary.holdings.map((holding) => (
-              <HoldingCard
+              <div
                 key={holding.asset.id}
-                expanded
-                history={computeAssetHistory(snapshot, holding.asset.id, addLocalDays(today, -29), today)}
-                holding={holding}
-                onEdit={openEditAsset}
-                onOpenHistory={openAssetHistory}
-                onRemove={removeAsset}
-              />
+                ref={(node) => {
+                  assetCardRefs.current[holding.asset.id] = node;
+                }}
+                className="scroll-mt-4 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary-ring)]"
+                data-asset-id={holding.asset.id}
+                tabIndex={-1}
+              >
+                <HoldingCard
+                  expanded
+                  history={computeAssetHistory(snapshot, holding.asset.id, addLocalDays(today, -29), today)}
+                  holding={holding}
+                  onEdit={openEditAsset}
+                  onOpenHistory={openAssetHistory}
+                  onRemove={removeAsset}
+                />
+              </div>
             ))}
             {summary.holdings.length === 0 && <Card className="text-sm text-[var(--muted-foreground)]">از تب افزودن، اولین خرید یا موجودی فعلی را ثبت کنید.</Card>}
           </div>
@@ -2262,6 +2307,7 @@ function HoldingCard({
   expanded,
   history,
   onEdit,
+  onOpenAsset,
   onOpenHistory,
   onRemove,
 }: {
@@ -2269,6 +2315,7 @@ function HoldingCard({
   history?: AssetHistoryPoint[];
   holding: ReturnType<typeof computePortfolio>["holdings"][number];
   onEdit: (assetId: string) => void;
+  onOpenAsset?: (assetId: string) => void;
   onOpenHistory?: (assetId: string) => void;
   onRemove: (assetId: string) => void;
 }) {
@@ -2276,7 +2323,12 @@ function HoldingCard({
   const profitTone = holding.totalProfit >= 0 ? "text-emerald-700" : "text-red-700";
   if (!expanded) {
     return (
-      <Card className="p-3">
+      <button
+        aria-label={`نمایش ${holding.asset.name} در صفحه دارایی‌ها`}
+        className={cardClasses("block w-full p-3 text-start transition active:scale-[0.99]")}
+        onClick={() => onOpenAsset?.(holding.asset.id)}
+        type="button"
+      >
         <div className="grid min-w-0 grid-cols-[2.5rem_minmax(0,1fr)_auto] items-center gap-3">
           <div className="grid h-10 w-10 min-w-10 shrink-0 place-items-center rounded-lg bg-[var(--primary-soft)] text-[var(--primary)]">
             <Icon className="h-5 w-5" size={20} />
@@ -2289,7 +2341,7 @@ function HoldingCard({
             </div>
           <p className={cn("shrink-0 text-left text-sm font-black", profitTone)}>{formatPercent(holding.totalProfitPercent)}</p>
         </div>
-      </Card>
+      </button>
     );
   }
 

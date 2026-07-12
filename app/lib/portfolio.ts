@@ -77,6 +77,7 @@ export const instruments: InstrumentDefinition[] = [
   { id: "currency_eur", name: "یورو", category: "currency", unit: "یورو", tgjuSlug: "price_eur", quoteCurrency: "IRR" },
   { id: "currency_gbp", name: "پوند انگلیس", category: "currency", unit: "پوند", tgjuSlug: "price_gbp", quoteCurrency: "IRR" },
   { id: "currency_aed", name: "درهم امارات", category: "currency", unit: "درهم", tgjuSlug: "price_aed", quoteCurrency: "IRR" },
+  { id: "currency_try", name: "لیر ترکیه", category: "currency", unit: "لیر", tgjuSlug: "price_try", quoteCurrency: "IRR" },
   { id: "crypto_usdt", name: "تتر", category: "crypto", unit: "USDT", tgjuSlug: "crypto-tether", quoteCurrency: "USD" },
   { id: "crypto_btc", name: "بیت‌کوین", category: "crypto", unit: "BTC", tgjuSlug: "crypto-bitcoin", quoteCurrency: "USD" },
   { id: "crypto_eth", name: "اتریوم", category: "crypto", unit: "ETH", tgjuSlug: "crypto-ethereum", quoteCurrency: "USD" },

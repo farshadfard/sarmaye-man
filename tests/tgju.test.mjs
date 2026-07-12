@@ -39,7 +39,7 @@ test("parses TGJU profile current price snippets as toman", () => {
   assert.equal(btcPrice?.priceToman, 250_000_000);
 });
 
-test("sync converts IRR to toman, handles silver_999, and converts crypto USD by daily dollar", async () => {
+test("sync converts IRR to toman, handles silver_999 and TRY, and converts crypto USD by daily dollar", async () => {
   const seenUrls = [];
   const fetcher = async (url) => {
     seenUrls.push(String(url));
@@ -56,6 +56,7 @@ test("sync converts IRR to toman, handles silver_999, and converts crypto USD by
     {
       requests: [
         { instrumentId: "silver_999", dates: ["2026-07-09"] },
+        { instrumentId: "currency_try", dates: ["2026-07-09"] },
         { instrumentId: "crypto_btc", dates: ["2026-07-09"] },
       ],
       refreshTodayInstrumentIds: [],
@@ -65,11 +66,13 @@ test("sync converts IRR to toman, handles silver_999, and converts crypto USD by
     fetcher,
   );
   const silver = synced.records.find((record) => record.instrumentId === "silver_999");
+  const lira = synced.records.find((record) => record.instrumentId === "currency_try");
   const btc = synced.records.find((record) => record.instrumentId === "crypto_btc");
 
   assert.ok(seenUrls.some((url) => url.includes("silver_999")));
+  assert.ok(seenUrls.some((url) => url.includes("price_try")));
   assert.equal(silver?.priceToman, 239_156);
+  assert.equal(lira?.priceToman, 170_000);
   assert.equal(btc?.priceToman, Math.round(63_269.04 * 170_000));
   assert.equal(synced.errors.length, 0);
 });
-
