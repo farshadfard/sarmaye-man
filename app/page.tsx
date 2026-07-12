@@ -1576,21 +1576,21 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="mt-2 flex flex-wrap items-center justify-start gap-2">
               <button
-                className="flex min-h-9 min-w-0 items-center gap-2 rounded-lg px-2.5 py-1.5 text-start text-xs font-extrabold text-[var(--foreground)] active:bg-[var(--muted)]"
+                className="asset-filter-trigger flex min-h-9 max-w-full items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-start font-extrabold active:bg-[var(--muted)]"
                 onClick={() => setAssetSortSheetOpen(true)}
                 type="button"
               >
-                <IconSort className="shrink-0 text-[var(--muted-foreground)]" size={15} />
+                <IconSort className="shrink-0" size={15} />
                 <span className="truncate">{selectedAssetSortLabel}</span>
               </button>
               <button
-                className="flex min-h-9 min-w-0 items-center gap-2 rounded-lg px-2.5 py-1.5 text-start text-xs font-extrabold text-[var(--foreground)] active:bg-[var(--muted)]"
+                className="asset-filter-trigger flex min-h-9 max-w-full items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-start font-extrabold active:bg-[var(--muted)]"
                 onClick={() => setAssetTypeSheetOpen(true)}
                 type="button"
               >
-                <ActiveAssetTypeIcon className="shrink-0 text-[var(--muted-foreground)]" size={15} />
+                <ActiveAssetTypeIcon className="shrink-0" size={15} />
                 <span className="truncate">{selectedAssetTypeLabel}</span>
               </button>
             </div>
@@ -2438,12 +2438,16 @@ function BottomSheet({
   const startYRef = useRef(0);
   const dragYRef = useRef(0);
   const draggingRef = useRef(false);
+  const activePointerIdRef = useRef<number | null>(null);
+  const cleanupDragRef = useRef<() => void>(() => undefined);
 
   if (!open) return null;
 
   function closeSheet() {
+    cleanupDragRef.current();
     dragYRef.current = 0;
     draggingRef.current = false;
+    activePointerIdRef.current = null;
     setDragY(0);
     setDragging(false);
     onOpenChange(false);
@@ -2451,34 +2455,44 @@ function BottomSheet({
 
   function handlePointerDown(event: React.PointerEvent<HTMLButtonElement>) {
     event.preventDefault();
+    cleanupDragRef.current();
+    activePointerIdRef.current = event.pointerId;
     startYRef.current = event.clientY - dragYRef.current;
     draggingRef.current = true;
     setDragging(true);
-    event.currentTarget.setPointerCapture(event.pointerId);
-  }
 
-  function handlePointerMove(event: React.PointerEvent<HTMLButtonElement>) {
-    if (!draggingRef.current) return;
-    event.preventDefault();
-    const nextDragY = Math.max(0, event.clientY - startYRef.current);
-    dragYRef.current = nextDragY;
-    setDragY(nextDragY);
-  }
+    const pointerId = event.pointerId;
+    const handleWindowPointerMove = (nativeEvent: PointerEvent) => {
+      if (!draggingRef.current || activePointerIdRef.current !== pointerId) return;
+      nativeEvent.preventDefault();
+      const nextDragY = Math.max(0, nativeEvent.clientY - startYRef.current);
+      dragYRef.current = nextDragY;
+      setDragY(nextDragY);
+    };
+    const handleWindowPointerUp = (nativeEvent: PointerEvent) => {
+      if (activePointerIdRef.current !== pointerId) return;
+      nativeEvent.preventDefault();
+      cleanupDragRef.current();
+      draggingRef.current = false;
+      activePointerIdRef.current = null;
+      setDragging(false);
+      if (dragYRef.current > 110) {
+        closeSheet();
+        return;
+      }
+      dragYRef.current = 0;
+      setDragY(0);
+    };
 
-  function handlePointerUp(event: React.PointerEvent<HTMLButtonElement>) {
-    if (!draggingRef.current) return;
-    event.preventDefault();
-    draggingRef.current = false;
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-    setDragging(false);
-    if (dragYRef.current > 110) {
-      closeSheet();
-      return;
-    }
-    dragYRef.current = 0;
-    setDragY(0);
+    window.addEventListener("pointermove", handleWindowPointerMove, { passive: false });
+    window.addEventListener("pointerup", handleWindowPointerUp, { passive: false });
+    window.addEventListener("pointercancel", handleWindowPointerUp, { passive: false });
+    cleanupDragRef.current = () => {
+      window.removeEventListener("pointermove", handleWindowPointerMove);
+      window.removeEventListener("pointerup", handleWindowPointerUp);
+      window.removeEventListener("pointercancel", handleWindowPointerUp);
+      cleanupDragRef.current = () => undefined;
+    };
   }
 
   return (
@@ -2497,9 +2511,6 @@ function BottomSheet({
           aria-label="کشیدن برای بستن"
           className="sheet-handle-zone flex w-full touch-none justify-center px-4 py-3"
           onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
           type="button"
         >
           <span className="sheet-handle h-1.5 w-12 rounded-full bg-[var(--border)]" />

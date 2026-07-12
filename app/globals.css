@@ -211,6 +211,12 @@ svg {
   touch-action: pan-y;
 }
 
+.asset-filter-trigger {
+  color: var(--muted-foreground);
+  font-size: 0.625rem;
+  line-height: 1.2;
+}
+
 .rtl-checkbox {
   display: flex;
   align-items: center;
@@ -257,7 +263,7 @@ svg {
 }
 
 .bottom-sheet {
-  animation: bottom-sheet-in 210ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: bottom-sheet-fade-in 160ms ease-out both;
   overscroll-behavior: contain;
   will-change: transform;
 }
@@ -438,12 +444,12 @@ svg {
   }
 }
 
-@keyframes bottom-sheet-in {
+@keyframes bottom-sheet-fade-in {
   from {
-    transform: translate3d(0, 100%, 0);
+    opacity: 0;
   }
   to {
-    transform: translate3d(0, 0, 0);
+    opacity: 1;
   }
 }
 
