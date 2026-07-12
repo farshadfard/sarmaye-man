@@ -70,7 +70,7 @@ declare global {
 const NEW_ASSET_VALUE = "__new_asset__";
 const APP_NAME = "سرمایه من";
 const APP_NAME_QUOTED = `«${APP_NAME}»`;
-const APP_VERSION = import.meta.env.VITE_APP_VERSION ?? "1.0.2";
+const APP_VERSION = import.meta.env.VITE_APP_VERSION ?? "1.0.3";
 const GITHUB_REPO_URL = "https://github.com/farshadfard/sarmaye-man";
 const PRICE_SYNC_ENDPOINT = import.meta.env.PROD ? "https://api.farshadfard.com/sarmaye-man-api/prices/sync" : "/api/prices/sync";
 const IS_NATIVE_ANDROID = import.meta.env.VITE_NATIVE_ANDROID === "1";
@@ -81,14 +81,14 @@ const themeOptions: Array<{ label: string; value: ThemePreference }> = [
   { label: "تیره", value: "dark" },
 ];
 const assetSortOptions: Array<{ label: string; value: AssetSortOption }> = [
-  { value: "profit-desc", label: "سود: بیشترین به کمترین" },
-  { value: "profit-asc", label: "سود: کمترین به بیشترین" },
-  { value: "loss-desc", label: "ضرر: بیشترین به کمترین" },
-  { value: "loss-asc", label: "ضرر: کمترین به بیشترین" },
-  { value: "buy-date-desc", label: "تاریخ خرید: جدیدترین" },
-  { value: "buy-date-asc", label: "تاریخ خرید: قدیمی‌ترین" },
-  { value: "add-date-desc", label: "تاریخ ثبت: جدیدترین" },
-  { value: "add-date-asc", label: "تاریخ ثبت: قدیمی‌ترین" },
+  { value: "profit-desc", label: "پرسودترین" },
+  { value: "profit-asc", label: "کم‌سودترین" },
+  { value: "loss-desc", label: "بیشترین زیان" },
+  { value: "loss-asc", label: "کمترین زیان" },
+  { value: "buy-date-desc", label: "جدیدترین خرید" },
+  { value: "buy-date-asc", label: "قدیمی‌ترین خرید" },
+  { value: "add-date-desc", label: "جدیدترین ثبت" },
+  { value: "add-date-asc", label: "قدیمی‌ترین ثبت" },
 ];
 
 function cn(...classes: Array<string | false | null | undefined>) {
@@ -837,7 +837,8 @@ export default function Home() {
   const [pendingAssetScrollId, setPendingAssetScrollId] = useState("");
   const [assetSortBy, setAssetSortBy] = useState<AssetSortOption>("profit-desc");
   const [assetTypeFilter, setAssetTypeFilter] = useState<AssetTypeFilter>("all");
-  const [assetSheetOpen, setAssetSheetOpen] = useState(false);
+  const [assetSortSheetOpen, setAssetSortSheetOpen] = useState(false);
+  const [assetTypeSheetOpen, setAssetTypeSheetOpen] = useState(false);
   const [pendingDeleteAssetId, setPendingDeleteAssetId] = useState("");
   const [pendingBackup, setPendingBackup] = useState<BackupConfirmationState | null>(null);
   const [editingAssetId, setEditingAssetId] = useState("");
@@ -907,7 +908,7 @@ export default function Home() {
     .filter((transaction) => transaction.assetId === editingAssetId)
     .sort((a, b) => a.date.localeCompare(b.date))
     .find((transaction) => transaction.type === "buy");
-  const selectedAssetSortLabel = assetSortOptions.find((option) => option.value === assetSortBy)?.label ?? "سود: بیشترین به کمترین";
+  const selectedAssetSortLabel = assetSortOptions.find((option) => option.value === assetSortBy)?.label ?? "پرسودترین";
   const selectedAssetTypeLabel = assetTypeFilter === "all" ? "همه نوع‌ها" : categoryLabels[assetTypeFilter];
   const ActiveAssetTypeIcon = assetTypeFilter === "all" ? IconWallet : categoryIcons[assetTypeFilter];
   const navItems: Array<{ id: Exclude<View, "assetHistory">; label: string; icon: ReturnType<typeof makeIcon> }> = [
@@ -1499,14 +1500,19 @@ export default function Home() {
         />
       )}
 
-      <AssetControlsSheet
+      <AssetSortSheet
+        onOpenChange={setAssetSortSheetOpen}
+        onSortChange={setAssetSortBy}
+        open={assetSortSheetOpen}
+        sortBy={assetSortBy}
+      />
+
+      <AssetTypeSheet
         assetTypeCounts={assetTypeCounts}
         filterBy={assetTypeFilter}
         onFilterChange={setAssetTypeFilter}
-        onOpenChange={setAssetSheetOpen}
-        onSortChange={setAssetSortBy}
-        open={assetSheetOpen}
-        sortBy={assetSortBy}
+        onOpenChange={setAssetTypeSheetOpen}
+        open={assetTypeSheetOpen}
       />
 
       {activeView === "dashboard" && (
@@ -1549,10 +1555,6 @@ export default function Home() {
           <section className="locked-view-list">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-base font-extrabold">دارایی‌های فعال</h2>
-              <Button className="min-h-9 shrink-0 px-3 py-1.5" onClick={() => navigateTo("add")}>
-                <IconPlus size={16} />
-                افزودن دارایی
-              </Button>
             </div>
             {summary.holdings.length === 0 ? (
               <Card className="text-center text-sm text-[var(--muted-foreground)]">هنوز دارایی ثبت نشده است.</Card>
@@ -1573,26 +1575,22 @@ export default function Home() {
                   <span className="shrink-0 text-sm font-bold text-[var(--muted-foreground)]">{formatNumber(filteredAssetHoldings.length, 0)} مورد</span>
                 </div>
               </div>
-              <Button className="min-h-9 shrink-0 px-3 py-1.5" onClick={() => navigateTo("add")}>
-                <IconPlus size={16} />
-                افزودن دارایی
-              </Button>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="mt-2 grid grid-cols-2 gap-2">
               <button
-                className="flex min-h-10 min-w-0 items-center gap-2 rounded-lg px-2.5 py-2 text-start text-sm font-extrabold text-[var(--foreground)] active:bg-[var(--muted)]"
-                onClick={() => setAssetSheetOpen(true)}
+                className="flex min-h-9 min-w-0 items-center gap-2 rounded-lg px-2.5 py-1.5 text-start text-xs font-extrabold text-[var(--foreground)] active:bg-[var(--muted)]"
+                onClick={() => setAssetSortSheetOpen(true)}
                 type="button"
               >
-                <IconSort className="shrink-0 text-[var(--primary)]" size={16} />
+                <IconSort className="shrink-0 text-[var(--muted-foreground)]" size={15} />
                 <span className="truncate">{selectedAssetSortLabel}</span>
               </button>
               <button
-                className="flex min-h-10 min-w-0 items-center gap-2 rounded-lg px-2.5 py-2 text-start text-sm font-extrabold text-[var(--foreground)] active:bg-[var(--muted)]"
-                onClick={() => setAssetSheetOpen(true)}
+                className="flex min-h-9 min-w-0 items-center gap-2 rounded-lg px-2.5 py-1.5 text-start text-xs font-extrabold text-[var(--foreground)] active:bg-[var(--muted)]"
+                onClick={() => setAssetTypeSheetOpen(true)}
                 type="button"
               >
-                <ActiveAssetTypeIcon className="shrink-0 text-[var(--primary)]" size={16} />
+                <ActiveAssetTypeIcon className="shrink-0 text-[var(--muted-foreground)]" size={15} />
                 <span className="truncate">{selectedAssetTypeLabel}</span>
               </button>
             </div>
@@ -2439,11 +2437,13 @@ function BottomSheet({
   const [dragging, setDragging] = useState(false);
   const startYRef = useRef(0);
   const dragYRef = useRef(0);
+  const draggingRef = useRef(false);
 
   if (!open) return null;
 
   function closeSheet() {
     dragYRef.current = 0;
+    draggingRef.current = false;
     setDragY(0);
     setDragging(false);
     onOpenChange(false);
@@ -2452,12 +2452,13 @@ function BottomSheet({
   function handlePointerDown(event: React.PointerEvent<HTMLButtonElement>) {
     event.preventDefault();
     startYRef.current = event.clientY - dragYRef.current;
+    draggingRef.current = true;
     setDragging(true);
     event.currentTarget.setPointerCapture(event.pointerId);
   }
 
   function handlePointerMove(event: React.PointerEvent<HTMLButtonElement>) {
-    if (!dragging) return;
+    if (!draggingRef.current) return;
     event.preventDefault();
     const nextDragY = Math.max(0, event.clientY - startYRef.current);
     dragYRef.current = nextDragY;
@@ -2465,8 +2466,9 @@ function BottomSheet({
   }
 
   function handlePointerUp(event: React.PointerEvent<HTMLButtonElement>) {
-    if (!dragging) return;
+    if (!draggingRef.current) return;
     event.preventDefault();
+    draggingRef.current = false;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
@@ -2521,27 +2523,20 @@ function BottomSheet({
   );
 }
 
-function AssetControlsSheet({
-  assetTypeCounts,
-  filterBy,
-  onFilterChange,
+function AssetSortSheet({
   onOpenChange,
   onSortChange,
   open,
   sortBy,
 }: {
-  assetTypeCounts: Map<AssetCategory, number>;
-  filterBy: AssetTypeFilter;
-  onFilterChange: (filter: AssetTypeFilter) => void;
   onOpenChange: (open: boolean) => void;
   onSortChange: (sort: AssetSortOption) => void;
   open: boolean;
   sortBy: AssetSortOption;
 }) {
   return (
-    <BottomSheet onOpenChange={onOpenChange} open={open} title="مرتب‌سازی و فیلتر">
+    <BottomSheet onOpenChange={onOpenChange} open={open} title="مرتب‌سازی">
       <section className="grid gap-3">
-        <h3 className="text-sm font-extrabold">مرتب‌سازی</h3>
         <div className="grid gap-2">
           {assetSortOptions.map((option) => (
             <button
@@ -2561,9 +2556,26 @@ function AssetControlsSheet({
           ))}
         </div>
       </section>
+    </BottomSheet>
+  );
+}
 
+function AssetTypeSheet({
+  assetTypeCounts,
+  filterBy,
+  onFilterChange,
+  onOpenChange,
+  open,
+}: {
+  assetTypeCounts: Map<AssetCategory, number>;
+  filterBy: AssetTypeFilter;
+  onFilterChange: (filter: AssetTypeFilter) => void;
+  onOpenChange: (open: boolean) => void;
+  open: boolean;
+}) {
+  return (
+    <BottomSheet onOpenChange={onOpenChange} open={open} title="نوع دارایی">
       <section className="grid gap-3">
-        <h3 className="text-sm font-extrabold">نوع دارایی</h3>
         <div className="grid grid-cols-2 gap-2">
           <button
             className={cn(
@@ -2654,7 +2666,7 @@ function HoldingCard({
         <div className="flex shrink-0 items-center gap-1">
           <button
             aria-label={`ویرایش ${holding.asset.name}`}
-            className="grid h-9 w-9 place-items-center rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--muted-foreground)]"
+            className="grid h-9 w-9 place-items-center rounded-lg text-[var(--muted-foreground)] transition active:scale-95"
             onClick={() => onEdit(holding.asset.id)}
             type="button"
           >
