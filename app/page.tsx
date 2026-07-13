@@ -1566,17 +1566,10 @@ export default function Home() {
       )}
 
       {activeView === "assets" && (
-        <div className="locked-view">
+        <div className="locked-view assets-view">
           <div className="locked-view-fixed">
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex min-w-0 items-baseline gap-2">
-                  <h1 className="truncate text-2xl font-black tracking-normal">دارایی‌ها</h1>
-                  <span className="shrink-0 text-sm font-bold text-[var(--muted-foreground)]">{formatNumber(filteredAssetHoldings.length, 0)} مورد</span>
-                </div>
-              </div>
-            </div>
-            <div className="mt-2 flex flex-wrap items-center justify-start gap-2">
+            <PageTitle title="دارایی‌ها" subtitle={`${formatNumber(filteredAssetHoldings.length, 0)} مورد`} />
+            <div className="flex flex-wrap items-center justify-start gap-2">
               <button
                 className="asset-filter-trigger flex min-h-9 max-w-full items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-start font-extrabold active:bg-[var(--muted)]"
                 onClick={() => setAssetSortSheetOpen(true)}

@@ -211,6 +211,10 @@ svg {
   touch-action: pan-y;
 }
 
+.assets-view {
+  gap: 0.5rem;
+}
+
 .asset-filter-trigger {
   color: var(--muted-foreground);
   font-size: 0.6875rem;
